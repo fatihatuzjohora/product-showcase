@@ -32,7 +32,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const auth = getAuth(app);
 
-  console.log(auth);
   // Function to create a new user
   const createUser = (email: string, password: string): Promise<void> => {
     setLoading(true);

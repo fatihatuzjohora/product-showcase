@@ -17,12 +17,12 @@ const Register = () => {
         throw new Error('AuthContext must be used within an AuthProvider');
     }
 
-    const { createUser } = authContext;
+    const { createUser, user } = authContext;
 
     const onSubmit: SubmitHandler<RegisterFormInputs> = async data => {
         try {
             await createUser(data.email, data.password);
-            console.log('User created successfully');
+            console.log('User created successfully', user);
         } catch (error) {
             console.error('Error creating user:', error);
         }
