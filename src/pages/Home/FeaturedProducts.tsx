@@ -42,15 +42,15 @@ const FeaturedProducts = () => {
                 </select>
             </div>
 
-            <div className="carousel carousel-end rounded-box ">
+            <div className="carousel w-[380px] md:w-full carousel-end rounded-box ">
                 {products && produtsWithImage.map((product: Product, index: number) => (
                     <div key={index} className="carousel-item flex-col gap-10 bg-base-100 shadow-lg">
                         <img
                             src={product.productImage}
                             alt={product.productName}
-                            className="w-3/4 mx-auto object-cover h-60 rounded-lg px-4"
+                            className="md:w-3/4 mx-auto object-cover h-60 rounded-lg px-4"
                         />
-                        <div className="p-4 text-center mx-auto w-3/4">
+                        <div className="p-4 text-center mx-auto w-[60%] md:w-3/4">
                             <h3 className="text-lg font-bold">{product.productName}</h3>
                             <p>{product.description}</p>
                             <p className="mt-2 font-semibold">Rating: {product.averageRating}</p>

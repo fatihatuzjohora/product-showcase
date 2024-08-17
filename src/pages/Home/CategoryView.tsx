@@ -48,7 +48,6 @@ const CategoryView = () => {
             </div>
             <div className="mt-6 mx-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 justify-items-center">
                 {data && produtsWithImage?.slice(0,3).map((product: Product, index: number) => {
-                    console.log(product);
                     return (
                         <div key={index} className="card bg-base-100 my-10 shadow-xl">
                             <figure>

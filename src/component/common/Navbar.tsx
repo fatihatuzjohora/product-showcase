@@ -1,9 +1,46 @@
+import { useContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
+import { useGetAllProducts } from "../../service/products.hook";
+import { Product } from "../../utils/types";
 
 const Navbar = () => {
+    const authContext = useContext(AuthContext);
+    const [search, setSearch] = useState('');
+
+    if (!authContext) {
+        throw new Error('AuthContext must be used within an AuthProvider');
+    }
+
+    const { user, logout, loading } = authContext;
+
+    // Use the custom hook to fetch products based on the search query
+    const { data, isLoading, refetch } = useGetAllProducts({ search: search || undefined });
+
+    
+
+    // Function to handle search input change
+    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearch(event.target.value);
+    };
+
+    // Effect to refetch data when search changes
+    useEffect(() => {
+        refetch();
+        
+    }, [search, refetch]);
+
+    const handleLogout = async () => {
+        try {
+            await logout();
+        } catch (error) {
+            console.error("Error logging out:", error);
+        }
+    };
+
     return (
         <div>
-            <div className="navbar ">
+            <div className="navbar">
                 <div className="navbar-start">
                     <div className="dropdown">
                         <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -35,7 +72,6 @@ const Navbar = () => {
                     >
                         MarketMingle
                     </Link>
-
                 </div>
                 <div className="navbar-center hidden lg:flex">
                     <ul className="menu menu-horizontal gap-3 px-1">
@@ -46,8 +82,49 @@ const Navbar = () => {
                     </ul>
                 </div>
                 <div className="navbar-end">
-                    <Link to={'/login'} className="btn">Login</Link>
+                    {loading ? (
+                        <span>Loading...</span>
+                    ) : user ? (
+                        <div className="flex items-center gap-2">
+                            {user.photoURL ? (
+                                <img
+                                    src={user.photoURL}
+                                    alt="User Avatar"
+                                    className="w-8 h-8 rounded-full"
+                                />
+                            ) : (
+                                <div className="w-8 h-8 rounded-full bg-gray-400"></div>
+                            )}
+                            <button onClick={handleLogout} className="btn btn-outline">Logout</button>
+                        </div>
+                    ) : (
+                        <Link to={'/login'} className="btn">Login</Link>
+                    )}
                 </div>
+            </div>
+            <div className="flex justify-center mt-4">
+                <input
+                    type="text"
+                    placeholder="Search..."
+                    className="input input-bordered w-full max-w-xs"
+                    value={search}
+                    onChange={handleSearchChange}
+                />
+            </div>
+            <div className="flex justify-center mt-4">
+                {isLoading ? (
+                    <p>Loading products...</p>
+                ) : (
+                    <ul>
+                        {data?.products.map((product: Product) => (
+                            <li onClick={() => setSearch("")} key={product._id} className="py-2">
+                                <Link to={`/productDetails/${product._id}`} className="text-blue-500 hover:underline">
+                                    {product.productName}
+                                </Link>
+                            </li>
+                        ))}
+                    </ul>
+                )}
             </div>
         </div>
     );

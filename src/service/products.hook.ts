@@ -1,6 +1,6 @@
 // In products.hook.js
 import { QueryKey, useQuery } from "@tanstack/react-query"
-import { getCategories, getFeaturedProducts, getProducts } from "./products.api"
+import { getCategories, getFeaturedProducts, getProducts, getSingleProduct } from "./products.api"
 
 const productsQueryKey = (params: {}) => ['products', params];
 
@@ -8,6 +8,12 @@ export const useGetAllProducts = (params = {}) => {
     return useQuery({
         queryKey: productsQueryKey(params),
         queryFn: () => getProducts(params)
+    });
+}
+export const useGetSingleProducts = (id: string ) => {
+    return useQuery({
+        queryKey: productsQueryKey(id),
+        queryFn: () => getSingleProduct(id)
     });
 }
 

@@ -5,7 +5,6 @@ import {
   signOut,
   updateProfile,
   User as FirebaseUser,
-  Auth,
   User,
 } from "firebase/auth";
 import { createContext, useEffect, useState, ReactNode, Context } from "react";

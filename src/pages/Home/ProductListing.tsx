@@ -7,7 +7,6 @@ import Title from "../../utils/Title";
 
 const ProductListing = () => {
     const { data, isLoading } = useGetAllProducts();
-    console.log(data);
 
     const produtsWithImage = data?.products?.map((product: { productImage: any; }) => {
         if (product.productImage === "") {

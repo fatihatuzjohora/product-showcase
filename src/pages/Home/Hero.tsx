@@ -1,6 +1,15 @@
+import { useContext } from "react";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
 
 const Hero = () => {
+    const authContext = useContext(AuthContext);
+
+    if (!authContext) {
+        throw new Error('AuthContext must be used within an AuthProvider');
+    }
+
+    const { user } = authContext;
     return (
         <div
             className="hero min-h-[80vh]"
@@ -15,8 +24,8 @@ const Hero = () => {
                         Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem
                         quasi. In deleniti eaque aut repudiandae et a id nisi.
                     </p>
-                    <Link to={'/login'}>
-                    <button className="btn btn-primary">Get Started</button>
+                    <Link to={user ? '/about' : '/login'}>
+                        <button className="btn btn-primary">{user ? 'About Us' : 'Get Started'}</button>
                     </Link>
                 </div>
             </div>

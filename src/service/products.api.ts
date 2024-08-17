@@ -10,6 +10,12 @@ export const getProducts = async (params = {}) => {
     const response = await axios.get(`${baseApi}/products?${queryString}`);
     return response.data;
 };
+export const getSingleProduct = async (id: string) => {
+
+    // Make the API call with the query string
+    const response = await axios.get(`${baseApi}/products/${id}`);
+    return response.data;
+};
 
 
 export const getCategories = async () => {
