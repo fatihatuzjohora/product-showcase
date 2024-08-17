@@ -42,23 +42,26 @@ const FeaturedProducts = () => {
                 </select>
             </div>
 
-            <div className="carousel w-[380px] md:w-full carousel-end rounded-box ">
-                {products && produtsWithImage.map((product: Product, index: number) => (
-                    <div key={index} className="carousel-item flex-col gap-10 bg-base-100 shadow-lg">
-                        <img
-                            src={product.productImage}
-                            alt={product.productName}
-                            className="md:w-3/4 mx-auto object-cover h-60 rounded-lg px-4"
-                        />
-                        <div className="p-4 text-center mx-auto w-[60%] md:w-3/4">
-                            <h3 className="text-lg font-bold">{product.productName}</h3>
-                            <p>{product.description}</p>
-                            <p className="mt-2 font-semibold">Rating: {product.averageRating}</p>
-                            <p className="mt-2 text-primary font-bold">{product.price}</p>
-                            <button className="btn btn-primary mt-4">Buy Now</button>
+            <div className="carousel w-[380px] md:w-full justify-center carousel-end rounded-box ">
+                {produtsWithImage.length === 0 ? <div className='flex justify-center items-center'>
+                    <h1 className="text-3xl font-semibold from-purple-400 via-pink-500 to-red-500">No products found</h1>
+                </div> :
+                    produtsWithImage.map((product: Product, index: number) => (
+                        <div key={index} className="carousel-item flex-col gap-10 bg-base-100 shadow-lg">
+                            <img
+                                src={product.productImage}
+                                alt={product.productName}
+                                className="md:w-3/4 mx-auto object-cover h-60 rounded-lg px-4"
+                            />
+                            <div className="p-4 text-center mx-auto w-[60%] md:w-3/4">
+                                <h3 className="text-lg font-bold">{product.productName}</h3>
+                                <p>{product.description}</p>
+                                <p className="mt-2 font-semibold">Rating: {product.averageRating}</p>
+                                <p className="mt-2 text-primary font-bold">{product.price}</p>
+                                <button className="btn btn-primary mt-4">Buy Now</button>
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
             </div>
         </Container>
     );

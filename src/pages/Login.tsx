@@ -12,12 +12,13 @@ type LoginFormInputs = {
 const Login = () => {
     const navigate = useNavigate();
     const { register, handleSubmit, formState: { errors } } = useForm<LoginFormInputs>();
-    const authContext = useContext(AuthContext)
+    const authContext = useContext(AuthContext);
+
     if (!authContext) {
         throw new Error('AuthContext must be used within an AuthProvider');
     }
 
-    const { signInUser, loading } = authContext;
+    const { signInUser, signInWithGoogle, loading } = authContext;
 
     const onSubmit: SubmitHandler<LoginFormInputs> = async data => {
         try {
@@ -27,7 +28,18 @@ const Login = () => {
             console.error('Error signing in:', error);
         }
     };
-if(loading) return <Loading/>
+
+    const handleGoogleSignIn = async () => {
+        try {
+            await signInWithGoogle();
+            navigate('/');
+        } catch (error) {
+            console.error('Error signing in with Google:', error);
+        }
+    };
+
+    if (loading) return <Loading />;
+
     return (
         <div className="hero min-h-screen bg-base-200">
             <div className="hero-content flex-col lg:flex-row-reverse">
@@ -39,6 +51,15 @@ if(loading) return <Loading/>
                 </div>
                 <div className="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
                     <form onSubmit={handleSubmit(onSubmit)} className="card-body">
+                        <div className="form-control mt-6">
+                            <button
+                                type="button"
+                                onClick={handleGoogleSignIn}
+                                className="btn btn-secondary"
+                            >
+                                Sign In with Google
+                            </button>
+                        </div>
                         <div className="form-control">
                             <label className="label">
                                 <span className="label-text">Email</span>
@@ -69,6 +90,7 @@ if(loading) return <Loading/>
                         <div className="form-control mt-6">
                             <button type="submit" className="btn btn-primary">Login</button>
                         </div>
+
                     </form>
                 </div>
             </div>

@@ -1,8 +1,9 @@
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
-import { useContext } from "react"
+import { useContext } from "react";
 import { AuthContext } from '../context/AuthProvider';
 import Loading from '../utils/Loading';
+
 type RegisterFormInputs = {
     name: string;
     email: string;
@@ -19,7 +20,7 @@ const Register = () => {
         throw new Error('AuthContext must be used within an AuthProvider');
     }
 
-    const { createUser, loading } = authContext;
+    const { createUser, signInWithGoogle, loading } = authContext;
 
     const onSubmit: SubmitHandler<RegisterFormInputs> = async data => {
         try {
@@ -30,7 +31,17 @@ const Register = () => {
         }
     };
 
-    if (loading) return <Loading/>;
+    const handleGoogleSignIn = async () => {
+        try {
+            await signInWithGoogle();
+            navigate('/');
+        } catch (error) {
+            console.error('Error signing in with Google:', error);
+        }
+    };
+
+    if (loading) return <Loading />;
+    
     return (
         <div className="hero min-h-screen bg-base-200">
             <div className="hero-content flex-col lg:flex-row">
@@ -42,6 +53,15 @@ const Register = () => {
                 </div>
                 <div className="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
                     <form onSubmit={handleSubmit(onSubmit)} className="card-body">
+                    <div className="form-control mt-6">
+                            <button 
+                                type="button" 
+                                onClick={handleGoogleSignIn} 
+                                className="btn btn-secondary"
+                            >
+                                Sign In with Google
+                            </button>
+                        </div>
                         <div className="form-control">
                             <label className="label">
                                 <span className="label-text">Name</span>
@@ -96,6 +116,7 @@ const Register = () => {
                         <div className="form-control mt-6">
                             <button type="submit" className="btn btn-primary">Register</button>
                         </div>
+                      
                     </form>
                 </div>
             </div>

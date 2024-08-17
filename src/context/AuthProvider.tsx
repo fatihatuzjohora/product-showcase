@@ -6,6 +6,8 @@ import {
   updateProfile,
   User as FirebaseUser,
   User,
+  GoogleAuthProvider,
+  signInWithPopup,
 } from "firebase/auth";
 import { createContext, useEffect, useState, ReactNode, Context } from "react";
 import { getAuth } from "firebase/auth";
@@ -17,6 +19,7 @@ interface AuthContextType {
   loading: boolean;
   createUser: (email: string, password: string) => Promise<void>;
   signInUser: (email: string, password: string) => Promise<void>;
+  signInWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
   updateUserProfile: (name: string, image: string) => Promise<void>;
   setLoading: (value: boolean) => void;
@@ -30,33 +33,53 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const auth = getAuth(app);
-console.log(app);
+
   // Function to create a new user
-  const createUser = (email: string, password: string): Promise<void> => {
+  const createUser = async (email: string, password: string): Promise<void> => {
     setLoading(true);
-    return createUserWithEmailAndPassword(auth, email, password).then((userCredential) => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       setUser(userCredential.user);
       setLoading(false);
-    }).catch((error) => {
+    } catch (error) {
       setLoading(false);
       throw error;
-    });
+    }
   };
 
   // Function to sign in a user
-  const signInUser = (email: string, password: string): Promise<void> => {
+  const signInUser = async (email: string, password: string): Promise<void> => {
     setLoading(true);
-    return signInWithEmailAndPassword(auth, email, password).then((userCredential) => {
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
       setUser(userCredential.user);
       setLoading(false);
-    }).catch((error) => {
+    } catch (error) {
       setLoading(false);
       throw error;
-    });
+    }
+  };
+
+  // Function to sign in with Google
+  const signInWithGoogle = async () => {
+    setLoading(true);
+    const provider = new GoogleAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, provider);
+      // This gives you a Google Access Token.
+      const credential = GoogleAuthProvider.credentialFromResult(result);
+      // The signed-in user info.
+      const user = result.user;
+      console.log(credential, user);
+      setUser(user);
+    } catch (error) {
+      console.error("Error signing in with Google:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Function to update the user's profile
-
   const updateUserProfile = async (name: string, image: string) => {
     try {
       if (auth.currentUser) {
@@ -65,17 +88,11 @@ console.log(app);
           photoURL: image,
         });
 
-        // Ensure that the user object matches the expected type
         setUser({
           ...auth.currentUser,
           displayName: name,
           photoURL: image,
-          emailVerified: auth.currentUser.emailVerified, // Ensure this is boolean
-          isAnonymous: auth.currentUser.isAnonymous,
-          metadata: auth.currentUser.metadata,
-          providerData: auth.currentUser.providerData,
-          uid: auth.currentUser.uid,
-        } as User); // Ensure this object is of type User
+        } as User);
       }
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -83,15 +100,16 @@ console.log(app);
   };
 
   // Function to log out the user
-  const logout = (): Promise<void> => {
+  const logout = async (): Promise<void> => {
     setLoading(true);
-    return signOut(auth).then(() => {
+    try {
+      await signOut(auth);
       setUser(null);
       setLoading(false);
-    }).catch((error) => {
+    } catch (error) {
       setLoading(false);
       throw error;
-    });
+    }
   };
 
   // Observer to track authentication state
@@ -110,6 +128,7 @@ console.log(app);
     loading,
     createUser,
     signInUser,
+    signInWithGoogle,
     logout,
     updateUserProfile,
     setLoading,

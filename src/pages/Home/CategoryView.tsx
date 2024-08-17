@@ -5,6 +5,7 @@ import { useGetAllProducts, useGetCategories } from '../../service/products.hook
 import Loading from '../../utils/Loading';
 import { Product } from '../../utils/types';
 import { getRandomImageUrl } from '../../utils/getRandomPics';
+import { Link } from 'react-router-dom';
 
 const CategoryView = () => {
     const [activeTab, setActiveTab] = useState<number>(0);
@@ -23,7 +24,7 @@ const CategoryView = () => {
         }
         return product;
     });
-    
+
     if (isLoading) return <Loading />
     return (
         <Container className='my-10 py-10'>
@@ -47,7 +48,7 @@ const CategoryView = () => {
                 ))}
             </div>
             <div className="mt-6 mx-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 justify-items-center">
-                {data && produtsWithImage?.slice(0,3).map((product: Product, index: number) => {
+                {data && produtsWithImage?.slice(0, 3).map((product: Product, index: number) => {
                     return (
                         <div key={index} className="card bg-base-100 my-10 shadow-xl">
                             <figure>
@@ -68,7 +69,10 @@ const CategoryView = () => {
                 }
                 )}
             </div>
+            <div className='flex justify-center'>
 
+                <Link to={"/categories"} className='btn btn-primary mx-auto mt-10'>View More</Link>
+            </div>
         </Container>
     );
 };
