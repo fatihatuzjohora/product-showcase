@@ -30,9 +30,9 @@ export const AuthContext: Context<AuthContextType | null> = createContext<AuthCo
 const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const auth = getAuth(app);
 
-  const auth: Auth = getAuth(app);
-
+  console.log(auth);
   // Function to create a new user
   const createUser = (email: string, password: string): Promise<void> => {
     setLoading(true);

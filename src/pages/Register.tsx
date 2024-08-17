@@ -11,10 +11,21 @@ type RegisterFormInputs = {
 
 const Register = () => {
     const { register, handleSubmit, formState: { errors }, watch } = useForm<RegisterFormInputs>();
-    const { createUser  } = useContext(AuthContext);
+    const authContext = useContext(AuthContext);
+
+    if (!authContext) {
+        throw new Error('AuthContext must be used within an AuthProvider');
+    }
+
+    const { createUser } = authContext;
+
     const onSubmit: SubmitHandler<RegisterFormInputs> = async data => {
-        const res = await createUser(data.email, data.password)
-        console.log(res);
+        try {
+            await createUser(data.email, data.password);
+            console.log('User created successfully');
+        } catch (error) {
+            console.error('Error creating user:', error);
+        }
     };
     return (
         <div className="hero min-h-screen bg-base-200">
