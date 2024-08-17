@@ -10,6 +10,9 @@ import { Link } from "react-router-dom";
 const AllProducts = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [currentPage, setCurrentPage] = useState(1);
+    const [sortBy, setSortBy] = useState<string>("price");
+    const [sortOrder, setSortOrder] = useState<string>("asc");
+
 
     // Filter state
     const [brandName, setBrandName] = useState<string>("");
@@ -26,8 +29,11 @@ const AllProducts = () => {
         search: brandName,
         category: categoryName,
         minPrice: priceRange[0] || 0,
-        maxPrice: priceRange[1] || Infinity
+        maxPrice: priceRange[1] || Infinity,
+        sortBy,
+        sortOrder
     });
+
 
     useEffect(() => {
         if (data) {
@@ -62,48 +68,72 @@ const AllProducts = () => {
                 {isFilterVisible ? "Hide Filters" : "Show Filters"}
             </button>
 
-            {/* Filter UI */}
+
+
             {isFilterVisible && (
-                <div className="mb-5 grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div className="">
-                        <label className="block text-gray-700">Brand Name:</label>
-                        <input
-                            type="text"
-                            value={brandName}
-                            onChange={(e) => setBrandName(e.target.value)}
-                            className="border p-2 w-full"
-                        />
+                <div>
+                    <div className="mb-5 grid grid-cols-1  gap-5 ">
+                        <div className="flex flex-col md:flex-row space-x-4">
+                            <label className="block text-gray-700">Sort By:</label>
+                            <button
+                                onClick={() => { setSortBy("price"); setSortOrder("asc"); }}
+                                className={`px-4 py-2 border rounded ${sortBy === "price" && sortOrder === "asc" ? "bg-blue-500 text-white" : ""}`}>
+                                Price: Low to High
+                            </button>
+                            <button
+                                onClick={() => { setSortBy("price"); setSortOrder("desc"); }}
+                                className={`px-4 py-2 border rounded ${sortBy === "price" && sortOrder === "desc" ? "bg-blue-500 text-white" : ""}`}>
+                                Price: High to Low
+                            </button>
+                            <button
+                                onClick={() => { setSortBy("createdAt"); setSortOrder("desc"); }}
+                                className={`px-4 py-2 border rounded ${sortBy === "createdAt" && sortOrder === "desc" ? "bg-blue-500 text-white" : ""}`}>
+                                Date Added: Newest First
+                            </button>
+                        </div>
                     </div>
-                    <div className="mb-3">
-                        <label className="block text-gray-700">Categories:</label>
-                        <select onChange={(e) => setCategoryName(e.target.value)} className="select w-full ">
-                            <option value={""} selected>All</option>
-                            {
-                                categories?.map((category: any) => (
-                                    <option key={category._id} value={category}>{category}</option>
-                                ))
-                            }
-                        </select>
-                    </div>
-                    <div className="mb-3">
-                        <label className="block text-gray-700">Price Range:</label>
-                        <input
-                            type="number"
-                            value={priceRange[0]}
-                            onChange={(e) => setPriceRange([parseFloat(e.target.value), priceRange[1]])}
-                            className="border p-2 w-full"
-                        />
-                    </div>
-                    <div className="mb-3">
-                        <span>To</span>
-                        <input
-                            type="number"
-                            value={priceRange[1]}
-                            onChange={(e) => setPriceRange([priceRange[0], parseFloat(e.target.value)])}
-                            className="border p-2 w-full"
-                        />
+                    <div className="mb-5 grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div className="">
+                            <label className="block text-gray-700">Brand Name:</label>
+                            <input
+                                type="text"
+                                value={brandName}
+                                onChange={(e) => setBrandName(e.target.value)}
+                                className="border p-2 w-full"
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <label className="block text-gray-700">Categories:</label>
+                            <select onChange={(e) => setCategoryName(e.target.value)} className="select select-bordered  w-full ">
+                                <option value={""} selected>All</option>
+                                {
+                                    categories?.map((category: any) => (
+                                        <option key={category._id} value={category}>{category}</option>
+                                    ))
+                                }
+                            </select>
+                        </div>
+                        <div className="mb-3">
+                            <label className="block text-gray-700">Price Range:</label>
+                            <input
+                                type="number"
+                                value={priceRange[0]}
+                                onChange={(e) => setPriceRange([parseFloat(e.target.value), priceRange[1]])}
+                                className="border p-2 w-full"
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <span>To</span>
+                            <input
+                                type="number"
+                                value={priceRange[1]}
+                                onChange={(e) => setPriceRange([priceRange[0], parseFloat(e.target.value)])}
+                                className="border p-2 w-full"
+                            />
+                        </div>
                     </div>
                 </div>
+
             )}
 
             {isLoading ? <Loading /> : (
