@@ -1,5 +1,5 @@
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useContext } from "react"
 import { AuthContext } from '../context/authContext';
 type RegisterFormInputs = {
@@ -10,6 +10,7 @@ type RegisterFormInputs = {
 };
 
 const Register = () => {
+    const navigate = useNavigate();
     const { register, handleSubmit, formState: { errors }, watch } = useForm<RegisterFormInputs>();
     const authContext = useContext(AuthContext);
 
@@ -17,12 +18,12 @@ const Register = () => {
         throw new Error('AuthContext must be used within an AuthProvider');
     }
 
-    const { createUser, user } = authContext;
+    const { createUser } = authContext;
 
     const onSubmit: SubmitHandler<RegisterFormInputs> = async data => {
         try {
             await createUser(data.email, data.password);
-            console.log('User created successfully', user);
+            navigate('/');
         } catch (error) {
             console.error('Error creating user:', error);
         }

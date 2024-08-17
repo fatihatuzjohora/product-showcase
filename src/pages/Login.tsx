@@ -1,5 +1,8 @@
+import { useContext } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/authContext';
+import Loading from '../utils/Loading';
 
 type LoginFormInputs = {
     email: string;
@@ -7,12 +10,24 @@ type LoginFormInputs = {
 };
 
 const Login = () => {
+    const navigate = useNavigate();
     const { register, handleSubmit, formState: { errors } } = useForm<LoginFormInputs>();
+    const authContext = useContext(AuthContext)
+    if (!authContext) {
+        throw new Error('AuthContext must be used within an AuthProvider');
+    }
 
-    const onSubmit: SubmitHandler<LoginFormInputs> = data => {
-        
+    const { signInUser, loading } = authContext;
+
+    const onSubmit: SubmitHandler<LoginFormInputs> = async data => {
+        try {
+            await signInUser(data.email, data.password);
+            navigate('/');
+        } catch (error) {
+            console.error('Error signing in:', error);
+        }
     };
-
+if(loading) return <Loading/>
     return (
         <div className="hero min-h-screen bg-base-200">
             <div className="hero-content flex-col lg:flex-row-reverse">
