@@ -10,10 +10,10 @@ const ProductDetails = () => {
     return (
         <div>
             {isLoading ? <Loading /> :
-                <div  className="card bg-base-100 my-10 shadow-xl">
+                <div  className="card bg-base-100 my-10 shadow-xl md:w-1/3 mx-auto">
                     <figure>
                         <img
-                            className="w-full object-cover"
+                            className="w-full  object-cover"
                             src={getRandomImageUrl()}
                             alt="Shoes" />
                     </figure>

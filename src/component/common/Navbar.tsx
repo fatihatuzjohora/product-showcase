@@ -1,12 +1,13 @@
 import { useContext, useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { AuthContext } from "../../context/AuthContext";
+import { Link, useLocation } from "react-router-dom";
+import { AuthContext } from "../../context/AuthProvider";
 import { useGetAllProducts } from "../../service/products.hook";
 import { Product } from "../../utils/types";
 
 const Navbar = () => {
     const authContext = useContext(AuthContext);
     const [search, setSearch] = useState('');
+    const location = useLocation();
 
     if (!authContext) {
         throw new Error('AuthContext must be used within an AuthProvider');
@@ -17,8 +18,6 @@ const Navbar = () => {
     // Use the custom hook to fetch products based on the search query
     const { data, isLoading, refetch } = useGetAllProducts({ search: search || undefined });
 
-    
-
     // Function to handle search input change
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearch(event.target.value);
@@ -26,9 +25,17 @@ const Navbar = () => {
 
     // Effect to refetch data when search changes
     useEffect(() => {
-        refetch();
-        
+        if (search) {
+            refetch();
+        }
     }, [search, refetch]);
+
+    // Effect to clear search state when navigating away from home
+    useEffect(() => {
+        if (location.pathname !== '/') {
+            setSearch('');
+        }
+    }, [location.pathname]);
 
     const handleLogout = async () => {
         try {
@@ -106,26 +113,28 @@ const Navbar = () => {
                 <input
                     type="text"
                     placeholder="Search..."
-                    className="input input-bordered w-full max-w-xs"
+                    className="input input-bordered w-full max-w-xs mb-3"
                     value={search}
                     onChange={handleSearchChange}
                 />
             </div>
-            <div className="flex justify-center mt-4">
-                {isLoading ? (
-                    <p>Loading products...</p>
-                ) : (
-                    <ul>
-                        {data?.products.map((product: Product) => (
-                            <li onClick={() => setSearch("")} key={product._id} className="py-2">
-                                <Link to={`/productDetails/${product._id}`} className="text-blue-500 hover:underline">
-                                    {product.productName}
-                                </Link>
-                            </li>
-                        ))}
-                    </ul>
-                )}
-            </div>
+            {search && (
+                <div className="flex justify-center mt-4">
+                    {isLoading ? (
+                        <p>Loading products...</p>
+                    ) : (
+                        <ul>
+                            {data?.products.map((product: Product) => (
+                                <li key={product._id} className="py-2">
+                                    <Link to={`/productDetails/${product._id}`} className="text-blue-500 hover:underline">
+                                        {product.productName}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
+            )}
         </div>
     );
 };

@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import Container from "../../utils/Container";
-import Title from '../../utils/Title';
 import { useGetAllProducts, useGetCategories } from '../../service/products.hook';
 import Loading from '../../utils/Loading';
 import { Product } from '../../utils/types';

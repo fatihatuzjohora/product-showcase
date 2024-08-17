@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
-import { AuthContext } from '../context/authContext';
+import { AuthContext } from '../context/AuthProvider';
 import Loading from '../utils/Loading';
 
 type LoginFormInputs = {
